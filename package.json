@@ -1,0 +1,24 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "Team Tracking Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smurphy7326/Employee-tracker-CMS.git"
+  },
+  "author": "Sean Murphy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smurphy7326/Employee-tracker-CMS/issues"
+  },
+  "homepage": "https://github.com/smurphy7326/Employee-tracker-CMS#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.0"
+  }
+}
