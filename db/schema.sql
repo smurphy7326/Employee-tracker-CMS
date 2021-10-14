@@ -1,4 +1,7 @@
--- Look at the module for information on what goes here
+-- The start of this would be the drop database
+DROP DATABASE IF EXISTS employees_db;
+-- This creates the database and is important when you have to put in the mysql prompts
+CREATE DATABASE employees_db;
 
-DROP DATABASE
-CREATE DATABASE
+USE employees_db;
+
