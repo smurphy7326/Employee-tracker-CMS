@@ -16,7 +16,7 @@ const app = express();
 // Need to have a title sequence, or something to make the title pop
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
-const startQuestions = () => { 
+function startQuestions () { 
     inquirer.prompt( // ask questions for the first prompt that is out there
         {
             type: 'list', 
@@ -46,12 +46,17 @@ const startQuestions = () => {
 
 // View all Departments 
 
-function viewAllDepartments () {
-    connection.query ('SELECT * FROM departments', function (err, res) {
-        console.table(res)
+function viewAllDepartments() {
+    // select from the db
+    let query = 'SELECT * FROM department'; // that will allow to show the different departments opr all departments
+    connection.query(query, function(err, res) {
+        if (err) throw err; // errors 
+        console.table(res); // the result will be shown in tables
         startQuestions();
-    })
+    });
 }
+
+
 // listening on the port of a certain localhost
 
 app.listen(PORT, () => {
