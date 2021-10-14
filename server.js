@@ -36,18 +36,44 @@ function startQuestions () {
 
         .then(answer => {
             switch(answer.firstQuestion) {
-                case "View All Deapartmetns":
-                    viewAllDepartments();
-                    break; //
+                case "View All Departments":
+                    viewAllDepartments(); // this will show that the answers that you have chosen is view all departments
+                    break; // this will prompt to go back
+                
+                case "View All Roles":
+                    viewAllRoles();
+                    break; // show what they asked for 
+
+                case "View All Employees":
+                    viewAllEmployees();
+                    break; // show what they asked for 
+
+                case "Add a Department":
+                    addDepartment();
+                    break; // show what they asked for 
+
+                case "Add a Role":
+                    addRole();
+                    break; // show what they asked for 
+
+                case "Add an Employee":
+                    addEmployee();
+                    break; // show what they asked for 
+
+                case "Update Employee Role":
+                    updateEmployeeRole();
+                    break; // show what they asked for 
+
+                default:
+                    quit(); // Quit the application 
             }
-        })
+        });
     }
     
 
 // View all Departments 
 
 function viewAllDepartments() {
-    // select from the db
     let query = 'SELECT * FROM department'; // that will allow to show the different departments opr all departments
     connection.query(query, function(err, res) {
         if (err) throw err; // errors 
@@ -56,6 +82,15 @@ function viewAllDepartments() {
     });
 }
 
+// View all Roles
+function viewAllRoles() { // get the roles from the table
+    let query = 'SELECT * FROM role'; // it will show the different roles that are in the table
+    connection.query(query, function(err, res) {
+        if (err) throw err; // this will just throw an err
+        console.table(res);
+        startQuestions();
+    })
+}
 
 // listening on the port of a certain localhost
 
