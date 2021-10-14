@@ -16,8 +16,8 @@ CREATE TABLE department;
 
 CREATE TABLE employee;
     id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Makes sure it is real
-    first_name VARCHAR(30), -- only 30 characters 
-    last_name VARCHAR(30), --  only 30 characters
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
     role_id INTEGER NOT NULL, -- makes sure the role is real and exists
     manager_id INTEGER 
 );
