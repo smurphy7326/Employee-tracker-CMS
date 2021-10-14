@@ -25,7 +25,7 @@ function startQuestions () {
             choices: [ // the different choices that you can choose from that you can choose from a space bar
                 'View All Departments',
                 'View All Roles',
-                'View All Departments',
+                'View All Employees',
                 'Add a Department',
                 'Add a Role',
                 'Add an Employee',
@@ -89,6 +89,23 @@ function viewAllRoles() { // get the roles from the table
         if (err) throw err; // this will just throw an err
         console.table(res);
         startQuestions();
+    })
+}
+
+// View All Employees
+function viewAllEmployees() { // trying to view all the employees
+    let query = 'SELECT * FROM employee'; // this prompt should show the all the employees and you can choose from them
+    connection.query(query, function(err, res) {
+        if (err) throw err; // throws an error if there is an incorrect prompt
+        console.table(res); // results are shown in a table form
+        startQuestions(); // goes back to the prompt from the first question
+    })
+}
+
+// Function to add a department for the prompt
+function addDepartment() {
+    inquirer.prompt({ // this is having a different prompt from the viewing becasue have the oppertunity to input a new department in this particular case
+        type: 'input', // this response allows you to 
     })
 }
 
