@@ -110,27 +110,23 @@ function viewAllEmployees() { // trying to view all the employees
 }
 
 // Function to add a department for the prompt
+// adds the depart to the SELECT * FROM department table
 function addDepartment() {
-    inquirer.prompt({ // this is having a different prompt from the viewing because have the ability to input a new department in this particular case
-        type: 'input', // this response allows you to 
-        name: 'newDepartmentName', // new name of the department
-        message: 'What is the name of the new Department?',
-        validate: input => {
-            if (input) {
-                return true; // when a response is put in correctly it is inserted
-            } else {
-                console.log('Please include a name for the Department.') // this message will appear if the response is left blank
-                return false;
-            }
-        }
-    }).then(function(res) {
-        connection.query('INSERT INTO department (name) VALUES (?)', [answer.newDepartmentName], function(err, res) { // this takes the response and puts it into the department names table
-            if (err) 
-                throw err;
+    inquirer.prompt([ // this is having a different prompt from the viewing because have the ability to input a new department in this particular case
+        {
+            type: 'input', // this response allows you to 
+            name: 'newDepartmentName', // new name of the department
+            message: 'What is the name of the new Department?', // coming up from the name of the dpartment 
+        }   
+]).then(function(res) {
+        var query = connection.query( 
+            'INSERT INTO department SET ? ', // this inserts into the department table
+            { name: res.newDepartmentName}, // this takes the response that you typed in and make that the answer
+            function(err){if (err) throw err; // if there is an error it will not allow you to put it in 
             console.table(res);
-            startQuestions();
-        });
-    });
+            startQuestions(); // goes back to the prompt at the beginning
+            })
+    })
 }
 
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
