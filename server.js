@@ -104,9 +104,66 @@ function viewAllEmployees() { // trying to view all the employees
 
 // Function to add a department for the prompt
 function addDepartment() {
-    inquirer.prompt({ // this is having a different prompt from the viewing becasue have the oppertunity to input a new department in this particular case
+    inquirer.prompt({ // this is having a different prompt from the viewing because have the ability to input a new department in this particular case
         type: 'input', // this response allows you to 
-    })
+        name: 'newDepartmentName', // new name of the department
+        message: 'What is the name of the new Department?',
+        validate: input => {
+            if (input) {
+                return true; // when a response is put in correctly it is inserted
+            } else {
+                console.log('Please include a name for the Department.') // this message will appear if the response is left blank
+                return false;
+            }
+        }
+    }).then(function(res) {
+        connection.query('INSERT INTO department (name) VALUES (?)', [answer.newDepartmentName], function(err, res) { // this takes the response and puts it into the department names table
+            if (err) 
+                throw err;
+            console.table(res);
+            startQuestions();
+        });
+    });
+}
+
+// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
+
+function addRole() {
+    inquirer .prompt ([
+        {
+            type: 'input',
+            name: 'newRoleTitle',
+            message: 'Enter the new roles title',
+            validate: input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log('Please incluse the name  of the role for the new Employee');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'newRoleSalary',
+            message: 'Please enter the salary for the new role' 
+            // There can be a way to validate it using isNAN
+        },
+        {
+            type: 'input', // So they can type in a response and not have to choose from a list
+            name: 'newRoleDepartment', // the new variable that the question will go under
+            message: 'What is the department ID of the new employee?'
+        }
+      ])
+      // the answers to the questions above then goes down to a prompt
+      .then(function(answer) { // I think department ID is correct but check that out just in case
+        // the Values are left as question marks because then answers are taken from the above answers
+          connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function(err, res) {
+              
+            const { newRoleTitle, newRoleSalary, newRoleDepartment}
+          }
+      })
+
 }
 
 // listening on the port of a certain localhost
