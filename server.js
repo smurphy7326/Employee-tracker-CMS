@@ -5,15 +5,21 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 const mysql = require('mysql2');
 const db = require('./db/connection'); // making sure the route that you need goes through db/connection to get the literature that is needed to make the link work
-const Connection = require('mysql2/typings/mysql/lib/Connection');
 
 
 // making the port the local 3001 to make sure that it works
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-
 // Need to have a title sequence, or something to make the title pop
+
+
+connection.connect(function(err) {
+    if (err) throw err;
+    startQuestions();
+});
+
+
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 function startQuestions () { 
@@ -179,6 +185,25 @@ function addEmployee() { // adding the employee prompt
             name:'newEmployeeLastName',
             message: 'What is the last name of the new employee?'
         },
+        {
+            type: 'input',
+            name: 'newEmployeeRole',
+            message: 'What is the new employees role in the company?'
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeManager',
+            message: 'Who is the manager of the new employee?'
+        }
+    ])
+    .then(function(answer) {
+        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            startQuestions();
+        });
+    });
+}
 
 // Update an Employee Role
 // WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
@@ -187,12 +212,21 @@ function updateEmployee() {
     inquirer.prompt([
         {
             type: 'input',
-            name: 'employeeUp'
+            name: 'employeeChangingRole',
+            message: 'What employee is changing their role?',
+            choices: employees
+        },
+        {
+            type: 'list',
+            name: 'updateEmployeeRoll', // this is close to the other prompt but not sure what else it could go to
+            message: 'What is the new role of the employee?'
         }
     ])
+    .then(function(answer) {
+        connection.query(`UPDATE employees SET role_id = ${res.employeeChangingRole} WHERE id = ${res.updateEmployeeRole}`,
+        function (err, res){
+            console.log(res)
+            startQuestions();
+        });
+    });
 }
-// listening on the port of a certain localhost
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
