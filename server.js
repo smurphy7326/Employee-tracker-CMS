@@ -1,9 +1,9 @@
 // Adding in the const that was required in the challenge documentation
-
+const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
-const mysql = require('mysql2');
+
 
 
 //Connect to the database
@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
     user: 'root',
     // the MySQL password
     password: 'Pass@7326',
-    // connecting tot he local database
+    // connecting to the local database
     database: 'employees_db'
 });
 
@@ -30,7 +30,7 @@ function startQuestions () {
             type: 'list', 
             name: 'firstQuestion', // this is the first question that they are going to ask
             message: 'What would you like to do with the team?', // Prompt that will pop up
-            choices: [ // the different choices that you can choose from that you can choose withsource schema bar
+            choices: [ // the different choices that you can choose from that you can choose with enter bar
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
@@ -43,8 +43,7 @@ function startQuestions () {
         })
 
         .then(result => {
-            console.log(result.choice);
-            switch(result.firstQuestions) {
+            switch(result.firstQuestion) {
                 case "View All Departments":
                     viewAllDepartments(); // this will show that the answers that you have chosen is view all departments
                     break; // this will prompt to go back
@@ -84,21 +83,21 @@ function startQuestions () {
 // View all Departments 
 
 function viewAllDepartments() {
-    connection.query('SELECT * FROM department', function (err, data) {
+    connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err; // errors 
-        console.table(data); // the result will be shown in tables
+        console.table(res); // the result will be shown in tables
         startQuestions();
     });
 }
 
 // View all Roles
 function viewAllRoles() { // get the roles from the table
-    connection.query('SELECT * FROM role', function (err, res) {
+    connection.query('SELECT * FROM role;', function (err, res, fields) {
         if (err) throw err; // this will just throw an err
         console.table(res);
         startQuestions();
     })
-}
+ }
 
 // View All Employees
 function viewAllEmployees() { // trying to view all the employees
@@ -175,7 +174,19 @@ function addRole() {
 }
 
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
-function addEmployee() { // adding the employee prompt 
+function addEmployee() {
+    connection.query('SELECT * FROM role', function (err, res) {
+        if (err) throw err;
+        let roleList = [];
+        let managerList = [];
+    
+        res.forEach(role => {
+            roleList.push({ name: role.title, value: role.ID });
+
+        res.forEach(manager => {
+            managerList.push({ name: manager.title, value: manager.ID})
+        })
+    }); 
     inquirer.prompt([
         {
             type: 'input',
@@ -188,14 +199,16 @@ function addEmployee() { // adding the employee prompt
             message: 'What is the last name of the new employee?'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'newEmployeeRole',
-            message: 'What is the new employees role in the company?'
+            message: 'What is the new employees role in the company?',
+            choices: roleList
         },
         {
             type: 'input',
             name: 'newEmployeeManager',
-            message: 'Who is the manager of the new employee?'
+            message: 'Who is the manager of the new employee?',
+            choices: managerList
         }
     ])
     .then(function(answer) {
@@ -205,7 +218,7 @@ function addEmployee() { // adding the employee prompt
             startQuestions();
         });
     });
-}
+});
 
 // Update an Employee Role
 // WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
@@ -232,6 +245,4 @@ function updateEmployee() {
         });
     });
 }
-
-startQuestions();
-
+}

@@ -1,8 +1,15 @@
 DROP DATABASE IF EXISTS employees_db;
--- This creates the database and is important when you have to put in the mysql prompts
+
 CREATE DATABASE employees_db;
 
 USE employees_db;
+
+
+CREATE TABLE department (
+    id INTEGER NOT NULL AUTO_INCREMENT, -- Makes sure the id is real and exists
+    name VARCHAR(30) NOT NULL, -- there has to be a name and be only 30 characters
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE employee (
     id INTEGER AUTO_INCREMENT NOT NULL,-- Makes sure it is real
@@ -10,12 +17,6 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_id INTEGER (10) NOT NULL, -- makes sure the role is real and exists
     manager_id INTEGER (10) NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE department (
-    id INTEGER NOT NULL AUTO_INCREMENT, -- Makes sure the id is real and exists
-    name VARCHAR(30) NOT NULL, -- there has to be a name and be only 30 characters
     PRIMARY KEY (id)
 );
 
