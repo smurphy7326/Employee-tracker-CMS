@@ -4,14 +4,24 @@ const cTable = require('console.table');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const mysql = require('mysql2');
-const db = require('./db/connection'); // making sure the route that you need goes through db/connection to get the literature that is needed to make the link work
 
 
-// making the port the local 3001 to make sure that it works
-const PORT = process.env.PORT || 3001;
+//Connect to the database
+const connection = mysql.createConnection({
+    host: 'localhost',
+    // the MYSQL username or or just the roo user since there was no username set up
+    user: 'root',
+    // the MySQL password
+    password: 'Pass@7326',
+    // connecting tot he local database
+    database: 'employees_db'
+});
 
-// Need to have a title sequence, or something to make the title pop
-
+connection.connect(function(err) {
+    if (err) throw err; // when there was an error it shows
+    console.log('Connected as Id' + connection.threadId); // It should show what ID you are connected to
+    startQuestions(); // brings to the main prompt with all the questions
+});
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 function startQuestions () { 
@@ -19,8 +29,8 @@ function startQuestions () {
         {
             type: 'list', 
             name: 'firstQuestion', // this is the first question that they are going to ask
-            message: 'What would you like to do?', // Prompt that will pop up
-            choices: [ // the different choices that you can choose from that you can choose from a space bar
+            message: 'What would you like to do with the team?', // Prompt that will pop up
+            choices: [ // the different choices that you can choose from that you can choose withsource schema bar
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
@@ -32,8 +42,9 @@ function startQuestions () {
             ]
         })
 
-        .then(answer => {
-            switch(answer.firstQuestion) {
+        .then(result => {
+            console.log(result.choice);
+            switch(result.firstQuestions) {
                 case "View All Departments":
                     viewAllDepartments(); // this will show that the answers that you have chosen is view all departments
                     break; // this will prompt to go back
@@ -62,8 +73,9 @@ function startQuestions () {
                     updateEmployeeRole();
                     break; // show what they asked for 
 
-                default:
-                    quit(); // Quit the application 
+                case 'Exit Application':
+                    connection.end(); // Quit the application 
+                    break;
             }
         });
     }
@@ -72,18 +84,16 @@ function startQuestions () {
 // View all Departments 
 
 function viewAllDepartments() {
-    let query = 'SELECT * FROM department'; // that will allow to show the different departments opr all departments
-    connection.query(query, function(err, res) {
+    connection.query('SELECT * FROM department', function (err, data) {
         if (err) throw err; // errors 
-        console.table(res); // the result will be shown in tables
+        console.table(data); // the result will be shown in tables
         startQuestions();
     });
 }
 
 // View all Roles
 function viewAllRoles() { // get the roles from the table
-    let query = 'SELECT * FROM role'; // it will show the different roles that are in the table
-    connection.query(query, function(err, res) {
+    connection.query('SELECT * FROM role', function (err, res) {
         if (err) throw err; // this will just throw an err
         console.table(res);
         startQuestions();
