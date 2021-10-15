@@ -159,13 +159,38 @@ function addRole() {
       .then(function(answer) { // I think department ID is correct but check that out just in case
         // the Values are left as question marks because then answers are taken from the above answers
           connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function(err, res) {
-              
-            const { newRoleTitle, newRoleSalary, newRoleDepartment}
-          }
-      })
-
+              if (err) throw err;
+              console.table(res);
+              startQuestions();
+          });
+      });
 }
 
+// THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
+function addEmployee() { // adding the employee prompt 
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newEmployeeFirstName',
+            message: 'What is the first name of the new employee?'
+        },
+        {
+            type: 'input',
+            name:'newEmployeeLastName',
+            message: 'What is the last name of the new employee?'
+        },
+
+// Update an Employee Role
+// WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
+
+function updateEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeUp'
+        }
+    ])
+}
 // listening on the port of a certain localhost
 
 app.listen(PORT, () => {
