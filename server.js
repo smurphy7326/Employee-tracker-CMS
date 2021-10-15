@@ -9,16 +9,8 @@ const db = require('./db/connection'); // making sure the route that you need go
 
 // making the port the local 3001 to make sure that it works
 const PORT = process.env.PORT || 3001;
-const app = express();
 
 // Need to have a title sequence, or something to make the title pop
-
-
-connection.connect(function(err) {
-    if (err) throw err;
-    startQuestions();
-});
-
 
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -230,3 +222,6 @@ function updateEmployee() {
         });
     });
 }
+
+startQuestions();
+
