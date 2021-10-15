@@ -144,7 +144,7 @@ function addRole() {
                 if (input) {
                     return true;
                 } else {
-                    console.log('Please incluse the name  of the role for the new Employee');
+                    console.log('Please include the name  of the role for the new Employee');
                     return false;
                 }
             }
