@@ -210,20 +210,23 @@ function updateEmployeeRole() {
     connection.query('SELECT * FROM role', function (err, res) {
         if (err) throw err;
         let roleList = [];
-    
+        let employeeList = [];
+
+
+        res.forEach(employee => {
+            employeeList.push ({ name: employee.title, value: employee
+            });
+        });
+        
         res.forEach(role => {
             roleList.push({ name: role.title, value: role.ID });
-        });
+    });
     inquirer.prompt([
         {
             type: 'input',
             name: 'updateEmployeeFirstName',
             message: 'What is the first name of the employee you are changing?',
-        },
-        {
-            type: 'input',
-            name: 'updateEmployeeLastName',
-            message: 'What is the last name of the employee you are changing?',
+            choices: employeeList
         },
         {
             type: 'list',
@@ -233,7 +236,7 @@ function updateEmployeeRole() {
         }
     ])
     .then(function(answer) {
-        connection.query("UPDATE employees SET (first_name, last_name, role_id) VALUES (?, ?, ?)", [answer.updateEmployeeFirstName, answer.updateEmployeeLastName, answer.updateNewEmployeeRole], function (err, res) {
+        connection.query("UPDATE employee SET role_id=? WHERE first_name=?", [answer. updateNewEmployeeRole, answer.updateEmployeeFirstName], function (err, res) {
         if (err) throw err;
             console.table(res)
             startQuestions();
