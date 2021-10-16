@@ -136,15 +136,7 @@ function addRole() {
         {
             type: 'input',
             name: 'newRoleTitle',
-            message: 'Enter the new roles title',
-            validate: input => {
-                if (input) {
-                    return true;
-                } else {
-                    console.log('Please include the name  of the role for the new Employee');
-                    return false;
-                }
-            }
+            message: 'Enter the new roles title:',
         },
         {
             type: 'input',
@@ -155,33 +147,28 @@ function addRole() {
         {
             type: 'input', // So they can type in a response and not have to choose from a list
             name: 'newRoleDepartment', // the new variable that the question will go under
-            message: 'What is the department ID of the new employee?'
-        }
+            message: 'What is the department ID of the new employee?',
+        },
       ])
       // the answers to the questions above then goes down to a prompt
       .then(function(answer) { // I think department ID is correct but check that out just in case
-        // the Values are left as question marks because then answers are taken from the above answers
-          connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function(err, res) {
-              if (err) throw err;
-              console.table(res);
-              startQuestions();
-          });
+        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          startQuestions();
       });
-}
+    })
+};
 
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
 function addEmployee() {
     connection.query('SELECT * FROM role', function (err, res) {
         if (err) throw err;
         let roleList = [];
-        let managerList = [];
     
         res.forEach(role => {
             roleList.push({ name: role.title, value: role.ID });
 
-        res.forEach(manager => {
-            managerList.push({ name: manager.title, value: manager.ID})
-        })
     }); 
     inquirer.prompt([
         {
@@ -204,41 +191,44 @@ function addEmployee() {
             type: 'input',
             name: 'newEmployeeManager',
             message: 'Who is the manager of the new employee?',
-            choices: managerList
         }
     ])
     .then(function(answer) {
-        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
+        connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
             if (err) throw err;
             console.table(res);
             startQuestions();
         });
     });
 });
+}
 
 // Update an Employee Role
 // WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 
-function updateEmployee() {
+function updateEmployeeRole() {
     inquirer.prompt([
         {
             type: 'input',
-            name: 'employeeChangingRole',
-            message: 'What employee is changing their role?',
-            choices: employees
+            name: 'updateEmployeeFirstName',
+            message: 'What is the first name of the employee you are changing?',
+        },
+        {
+            type: 'input',
+            name: 'updateEmployeeLastName',
+            message: 'What is the last name of the employee you are changing?',
         },
         {
             type: 'list',
-            name: 'updateEmployeeRoll', // this is close to the other prompt but not sure what else it could go to
+            name: 'updateNewEmployeeRole', // this is close to the other prompt but not sure what else it could go to
             message: 'What is the new role of the employee?'
         }
     ])
     .then(function(answer) {
-        connection.query(`UPDATE employees SET role_id = ${res.employeeChangingRole} WHERE id = ${res.updateEmployeeRole}`,
-        function (err, res){
-            console.log(res)
+        connection.query("UPDATE employees SET (first_name, last_name, role_id) VALUES (?, ?, ?)", [answer.updateEmployeeFirstName, answer.updateEmployeeLastName, answer.updateNewEmployeeRole], function (err, res) {
+        if (err) throw err;
+            console.table(res)
             startQuestions();
         });
     });
-}
 }

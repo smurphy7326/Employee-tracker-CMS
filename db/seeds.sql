@@ -31,13 +31,13 @@ VALUES
 INSERT INTO employee
     (first_name, last_name, role_id, manager_id)
 VALUES
-    ('Michael', 'Brancato', 1, NULL),
-    ('Richard', 'Whitehead', 2, NULL),
-    ('Andi', 'Bracia', 3, 1),
-    ('Kurtus', 'Rose', 4, 1),
-    ('Brenna', 'Calderara', 5, 1),
+    ('Michael', 'Brancato', 1, 1),
+    ('Richard', 'Whitehead', 2, 2),
+    ('Andi', 'Bracia', 3, 2),
+    ('Kurtus', 'Rose', 4, 2),
+    ('Brenna', 'Calderara', 5, 2),
     ('Erin', 'Flanagan', 6, 2),
-    ('Brian', 'ODonnell', 7, 1),
+    ('Brian', 'ODonnell', 7, 2),
     ('Cindy', 'Mascolo', 8, 2),
     ('Chris', 'Choinere', 9, 2),
     ('Jen', 'Eagleson', 10, 2);
