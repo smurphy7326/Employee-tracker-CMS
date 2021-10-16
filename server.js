@@ -37,7 +37,7 @@ function startQuestions () {
                 'Add a Department',
                 'Add a Role',
                 'Add an Employee',
-                'Update an Employee Role',
+                'Update Employee Role',
                 'Exit Application'
             ]
         })
@@ -207,6 +207,13 @@ function addEmployee() {
 // WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 
 function updateEmployeeRole() {
+    connection.query('SELECT * FROM role', function (err, res) {
+        if (err) throw err;
+        let roleList = [];
+    
+        res.forEach(role => {
+            roleList.push({ name: role.title, value: role.ID });
+        });
     inquirer.prompt([
         {
             type: 'input',
@@ -221,7 +228,8 @@ function updateEmployeeRole() {
         {
             type: 'list',
             name: 'updateNewEmployeeRole', // this is close to the other prompt but not sure what else it could go to
-            message: 'What is the new role of the employee?'
+            message: 'What is the new role of the employee?',
+            choices: roleList
         }
     ])
     .then(function(answer) {
@@ -231,4 +239,5 @@ function updateEmployeeRole() {
             startQuestions();
         });
     });
-}
+});
+};
