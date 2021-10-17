@@ -1,3 +1,4 @@
+  
 // Adding in the const that was required in the challenge documentation
 const mysql = require('mysql2');
 const cTable = require('console.table');
@@ -22,6 +23,7 @@ connection.connect(function(err) {
     console.log('Connected as Id' + connection.threadId); // It should show what ID you are connected to
     startQuestions(); // brings to the main prompt with all the questions
 });
+
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 function startQuestions () { 
@@ -83,7 +85,7 @@ function startQuestions () {
 // View all Departments 
 
 function viewAllDepartments() {
-    connection.query('SELECT * FROM department', function (err, res) {
+    connection.query('SELECT * FROM departments', function (err, res) {
         if (err) throw err; // errors 
         console.table(res); // the result will be shown in tables
         startQuestions();
@@ -92,7 +94,7 @@ function viewAllDepartments() {
 
 // View all Roles
 function viewAllRoles() { // get the roles from the table
-    connection.query('SELECT * FROM role;', function (err, res, fields) {
+    connection.query('SELECT * FROM roles;', function (err, res, fields) {
         if (err) throw err; // this will just throw an err
         console.table(res);
         startQuestions();
@@ -100,8 +102,13 @@ function viewAllRoles() { // get the roles from the table
  }
 
 // View All Employees
-function viewAllEmployees() { // trying to view all the employees
-    let query = 'SELECT * FROM employee'; // this prompt should show the all the employees and you can choose from them
+function viewAllEmployees() { // W3 schools 
+    let query = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, concat(m.first_name, ' ', m.last_name) AS manager
+    FROM employees e
+    JOIN roles ON e.role_id = roles.id 
+    JOIN departments on roles.department_id = departments.id 
+    LEFT JOIN employees m ON m.id = e.manager_id`
+     // this prompt is going to ask for all the different things specifically rather than just the employee table
     connection.query(query, function(err, res) {
         if (err) throw err; // throws an error if there is an incorrect prompt
         console.table(res); // results are shown in a table form
@@ -116,11 +123,11 @@ function addDepartment() {
         {
             type: 'input', // this response allows you to 
             name: 'newDepartmentName', // new name of the department
-            message: 'What is the name of the new Department?', // coming up from the name of the dpartment 
+            message: 'What is the name of the new Department?', // coming up from the name of the department 
         }   
 ]).then(function(res) {
         var query = connection.query( 
-            'INSERT INTO department SET ? ', // this inserts into the department table
+            'INSERT INTO departments SET ? ', // this inserts into the department table
             { name: res.newDepartmentName}, // this takes the response that you typed in and make that the answer
             function(err){if (err) throw err; // if there is an error it will not allow you to put it in 
             console.table(res);
@@ -147,12 +154,12 @@ function addRole() {
         {
             type: 'input', // So they can type in a response and not have to choose from a list
             name: 'newRoleDepartment', // the new variable that the question will go under
-            message: 'What is the department ID of the new employee?',
+            message: 'What is the department ID of the new employee? (Please enter a number 1-5)',
         },
       ])
       // the answers to the questions above then goes down to a prompt
       .then(function(answer) { // I think department ID is correct but check that out just in case
-        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function (err, res) {
+        connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)", [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function (err, res) {
           if (err) throw err;
           console.table(res);
           startQuestions();
@@ -162,7 +169,7 @@ function addRole() {
 
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
 function addEmployee() {
-    connection.query('SELECT * FROM role', function (err, res) {
+    connection.query('SELECT * FROM roles', function (err, res) {
         if (err) throw err;
         let roleList = [];
     
@@ -190,11 +197,11 @@ function addEmployee() {
         {
             type: 'input',
             name: 'newEmployeeManager',
-            message: 'Who is the manager of the new employee?',
+            message: 'What is the ID of the Manager who they will work under? (Please enter an ID 1-10)',
         }
     ])
     .then(function(answer) {
-        connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
+        connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
             if (err) throw err;
             console.table(res);
             startQuestions();
@@ -207,17 +214,18 @@ function addEmployee() {
 // WHEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 
 function updateEmployeeRole() {
-    connection.query('SELECT * FROM role', function (err, res) {
+    connection.query('SELECT * FROM roles', function (err, res) {
         if (err) throw err;
         let roleList = [];
-        let employeeList = [];
-
-
-        res.forEach(employee => {
-            employeeList.push ({ name: employee.title, value: employee
-            });
-        });
+        // let employeeList = [];
         
+
+        // res.forEach(employee => {
+        //     employeeList.push ({ name: employee.title, value: employee
+        //     });
+        // });
+        // work on the list for employees some other time
+
         res.forEach(role => {
             roleList.push({ name: role.title, value: role.ID });
     });
@@ -226,7 +234,7 @@ function updateEmployeeRole() {
             type: 'input',
             name: 'updateEmployeeFirstName',
             message: 'What is the first name of the employee you are changing?',
-            choices: employeeList
+            // choices: employeeList
         },
         {
             type: 'list',
@@ -236,7 +244,7 @@ function updateEmployeeRole() {
         }
     ])
     .then(function(answer) {
-        connection.query("UPDATE employee SET role_id=? WHERE first_name=?", [answer. updateNewEmployeeRole, answer.updateEmployeeFirstName], function (err, res) {
+        connection.query("UPDATE employees SET role_id=? WHERE first_name=?", [answer. updateNewEmployeeRole, answer.updateEmployeeFirstName], function (err, res) {
         if (err) throw err;
             console.table(res)
             startQuestions();
