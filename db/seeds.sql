@@ -23,7 +23,7 @@ VALUES
     ('HR Assistant', 40000, 3),
 
     ('Lawyer', 160000, 4),
-    ('Paraleagl', 45000, 4),
+    ('Paralegal', 45000, 4),
 
     ('Sales Lead', 90000, 5),
     ('Salesperson', 30000, 5);

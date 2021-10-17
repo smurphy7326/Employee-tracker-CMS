@@ -3,7 +3,6 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
-const chalk = require('chalk');
 
 
 
@@ -23,7 +22,6 @@ connection.connect(function(err) {
     console.log('Connected as Id' + connection.threadId); // It should show what ID you are connected to
     startQuestions(); // brings to the main prompt with all the questions
 });
-
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 function startQuestions () { 
@@ -102,11 +100,11 @@ function viewAllRoles() { // get the roles from the table
  }
 
 // View All Employees
-function viewAllEmployees() { // W3 schools 
+function viewAllEmployees() { // W3 schools article was helpful, to get the specific things that i needed. Also AskBCS helped a lot with the LEFT JOIN part
     let query = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, concat(m.first_name, ' ', m.last_name) AS manager
     FROM employees e
-    JOIN roles ON e.role_id = roles.id 
-    JOIN departments on roles.department_id = departments.id 
+    LEFT JOIN roles ON e.role_id = roles.id 
+    LEFT JOIN departments on roles.department_id = departments.id 
     LEFT JOIN employees m ON m.id = e.manager_id`
      // this prompt is going to ask for all the different things specifically rather than just the employee table
     connection.query(query, function(err, res) {
@@ -142,26 +140,26 @@ function addRole() {
     inquirer .prompt ([
         {
             type: 'input',
-            name: 'newRoleTitle',
+            name: 'newRoleTitle', //the new role title
             message: 'Enter the new roles title:',
         },
         {
             type: 'input',
-            name: 'newRoleSalary',
-            message: 'Please enter the salary for the new role' 
+            name: 'newRoleSalary', //the new salary was entered
+            message: 'Please enter the salary for the new role! (Cannot be longer than 10 numbers, even though that would be great)' 
             // There can be a way to validate it using isNAN
         },
         {
             type: 'input', // So they can type in a response and not have to choose from a list
             name: 'newRoleDepartment', // the new variable that the question will go under
-            message: 'What is the department ID of the new employee? (Please enter a number 1-5)',
+            message: 'What is the department ID of the new employee? (Please make sure the Department is real):', 
         },
       ])
       // the answers to the questions above then goes down to a prompt
       .then(function(answer) { // I think department ID is correct but check that out just in case
         connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)", [answer.newRoleTitle, answer.newRoleSalary, answer.newRoleDepartment], function (err, res) {
           if (err) throw err;
-          console.table(res);
+          console.table("A new role was added for the growing company!");
           startQuestions();
       });
     })
@@ -171,39 +169,39 @@ function addRole() {
 function addEmployee() {
     connection.query('SELECT * FROM roles', function (err, res) {
         if (err) throw err;
-        let roleList = [];
+        let roleList = []; 
     
         res.forEach(role => {
-            roleList.push({ name: role.title, value: role.ID });
+            roleList.push({ name: role.title, value: role.id }); // Gives you a list of the roles that you can choose from 
 
     }); 
     inquirer.prompt([
         {
             type: 'input',
-            name: 'newEmployeeFirstName',
+            name: 'newEmployeeFirstName', // enter a new first name 
             message: 'What is the first name of the new employee?'
         },
         {
             type: 'input',
-            name:'newEmployeeLastName',
+            name:'newEmployeeLastName', // enter a new lat name 
             message: 'What is the last name of the new employee?'
         },
         {
             type: 'list',
-            name: 'newEmployeeRole',
+            name: 'newEmployeeRole', // Gives you a list of the roles that you can choose from
             message: 'What is the new employees role in the company?',
             choices: roleList
         },
         {
             type: 'input',
-            name: 'newEmployeeManager',
+            name: 'newEmployeeManager', // Asks the who the manager of the employee will be and trying to keep it limited to the employees that were already there at the beginning of the list
             message: 'What is the ID of the Manager who they will work under? (Please enter an ID 1-10)',
         }
     ])
     .then(function(answer) {
         connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
             if (err) throw err;
-            console.table(res);
+            console.table("New Employee is added to the business!");
             startQuestions();
         });
     });
@@ -221,32 +219,32 @@ function updateEmployeeRole() {
         
 
         // res.forEach(employee => {
-        //     employeeList.push ({ name: employee.title, value: employee
-        //     });
+        //     employeeList.push ({ name: employee.title, value: employee.id });
         // });
         // work on the list for employees some other time
 
         res.forEach(role => {
-            roleList.push({ name: role.title, value: role.ID });
+            roleList.push({ name: role.title, value: role.id });
     });
     inquirer.prompt([
         {
             type: 'input',
-            name: 'updateEmployeeFirstName',
-            message: 'What is the first name of the employee you are changing?',
+            name: 'updateEmployeeId',
+            message: 'What is the ID of the employee you are trying to change?', // Easier to ask for the ID of the employee since if it was the first name and there are multiple it would change. for later uses another list could be added to choose from that set list of people
             // choices: employeeList
         },
         {
             type: 'list',
-            name: 'updateNewEmployeeRole', // this is close to the other prompt but not sure what else it could go to
+            name: 'updateNewEmployeeRole', // you can choose the new role from the list and it will be changed in the table
             message: 'What is the new role of the employee?',
             choices: roleList
         }
     ])
     .then(function(answer) {
-        connection.query("UPDATE employees SET role_id=? WHERE first_name=?", [answer. updateNewEmployeeRole, answer.updateEmployeeFirstName], function (err, res) {
+        console.log(answer)
+        connection.query("UPDATE employees SET role_id=? WHERE id =?", [answer.updateNewEmployeeRole, answer.updateEmployeeId], function (err, res) {
         if (err) throw err;
-            console.table(res)
+            console.log('Updated Employee Role!!')
             startQuestions();
         });
     });
