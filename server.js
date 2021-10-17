@@ -152,7 +152,7 @@ function addRole() {
         {
             type: 'input', // So they can type in a response and not have to choose from a list
             name: 'newRoleDepartment', // the new variable that the question will go under
-            message: 'What is the department ID of the new employee? (Please make sure the Department is real):', 
+            message: 'What is the department ID of the new employee? (Please make sure the Department is real):', // We could in the future make a list as well for this 
         },
       ])
       // the answers to the questions above then goes down to a prompt
@@ -168,7 +168,7 @@ function addRole() {
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
 function addEmployee() {
     connection.query('SELECT * FROM roles', function (err, res) {
-        if (err) throw err;
+        if (err) throw err; // if there is an error it will pop up
         let roleList = []; 
     
         res.forEach(role => {
@@ -199,10 +199,10 @@ function addEmployee() {
         }
     ])
     .then(function(answer) {
-        connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) {
+        connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.newEmployeeFirstName, answer.newEmployeeLastName, answer.newEmployeeRole, answer.newEmployeeManager], function (err, res) { // this will show the name of the people in the list first last and the role which will get the salary of the role etc. 
             if (err) throw err;
-            console.table("New Employee is added to the business!");
-            startQuestions();
+            console.table("New Employee is added to the business!"); // message that will appear after it is completed
+            startQuestions(); // prompt to ge back to the beginning
         });
     });
 });
@@ -242,9 +242,9 @@ function updateEmployeeRole() {
     ])
     .then(function(answer) {
         console.log(answer)
-        connection.query("UPDATE employees SET role_id=? WHERE id =?", [answer.updateNewEmployeeRole, answer.updateEmployeeId], function (err, res) {
-        if (err) throw err;
-            console.log('Updated Employee Role!!')
+        connection.query("UPDATE employees SET role_id=? WHERE id =?", [answer.updateNewEmployeeRole, answer.updateEmployeeId], function (err, res) { // it takes your answers and changes them in the tables, just hit view employees and that will change
+        if (err) throw err; // if there is an error it will pop up
+            console.log('Updated Employee Role!!') // message when an employee is updated
             startQuestions();
         });
     });

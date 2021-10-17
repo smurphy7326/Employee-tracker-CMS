@@ -5,6 +5,7 @@
 This application is a CMS, or Content Management System, to help create and keep track of employees for a business. This application uses Node.js and MySql database to help organize the employees and help update if they have to. The information is put in and then it is help shown to people through the console.table NPM package. With the proper storage of data for the employees, a business can run smoothly and also be helpful to show all the information that an employee may need. A mom and pop shop can use this, or a giant business should be able to track the employee data and find it useful. 
 
 For a quick user start guide to use this application, just click on the link: 
+https://drive.google.com/file/d/1DEt05QVN-ADyeXHbY2vImpuFs5cU2ZYg/view
 This will be helpful in starting the project off on the right foot!
 
 
@@ -55,7 +56,7 @@ To use the application
 
 5. If there are issues with the prompts and you receive an error message, you can hit the "control" and "c" button at the same time and that will exit the application and you can start again by running "node server.js".
 
-6. If any questions, comments, or concerns you can go to the video above with any questions.
+6. If any questions, comments, or concerns you can go to the video above with any questions. OR feel free to email me at the link down below!
 
 ## License 
 
